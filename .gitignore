@@ -11,3 +11,11 @@
 /example-flashdevelop/extensions
 /example-flashdevelop/bin
 /example-flashdevelop/dist
+.DS_Store
+/build/android
+/build/default
+/android/.idea
+/android/.gradle
+/android/local.properties
+/build/build.config
+/android/app/build/generated

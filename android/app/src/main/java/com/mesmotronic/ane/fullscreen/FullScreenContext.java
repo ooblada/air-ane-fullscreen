@@ -72,7 +72,7 @@ public class FullScreenContext extends FREContext
 	@Override
 	public Map<String, FREFunction> getFunctions() 
 	{
-		Map<String, FREFunction> functions = new HashMap<String, FREFunction>();
+		Map<String, FREFunction> functions = new HashMap<>();
 		
 		functions.put("init", new InitFunction());
 		functions.put("leanMode", new LeanModeFunction());

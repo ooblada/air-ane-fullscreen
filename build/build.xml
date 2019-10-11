@@ -4,30 +4,50 @@
     <!-- Config -->
     <property file="build.config"/>
 
+	<!-- Load ant-contrib -->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="ant-contrib-0.6.jar"/>
+		</classpath>
+	</taskdef>
+
     <!-- All -->
     <target name="all" depends="android,swc,package" description="Full build of extension"/>
 
     <!-- Android -->
     <target name="android" description="Build Android Library">
-		<delete dir="../temp-java"/>
-		<mkdir dir="../temp-java"/>
+	
+        <!-- paths -->
+        <property name="build.intermediates" value="../android/app/build/intermediates"/>
+        <property name="build.release" value="${build.intermediates}/packaged-classes/release"/>
+
+	<!-- clean up destination dir -->
+	<delete dir="android"/>
+	<mkdir dir="android"/>
+
+	<exec executable="/usr/libexec/java_home" outputproperty="java.home">
+            <arg line="-v 1.8" />
+        </exec>
 		
         <echo message="Using Java version ${ant.java.version}."/>
 
-        <javac source="1.6" srcdir="../jar/src" destdir="../temp-java" includeantruntime="false">
-			<src path="../jar/src"/>
-            <classpath>
-                <pathelement location="${android.sdk}/android.jar"/>
-                <pathelement location="${flex.sdk}/lib/android/FlashRuntimeExtensions.jar"/>
-                <!-- <pathelement location="../android-jar/libs/android-support-v4.jar"/> -->
-            </classpath>
-        </javac>
-        
-		<delete file="android/${name.jar}.jar"/>
-        <jar basedir="../temp-java" destfile="android/${name.jar}.jar"/>
-		<!-- <copy file="../android-jar/libs/android-support-v4.jar" todir="../temp/android/"/> -->
-		
-		<delete dir="../temp-java"/>
+	<!-- clean the build -->
+        <exec executable="./gradlew" dir="../android">
+            <env key="JAVA_HOME" path="${java.home}"/>
+            <env key="ANDROID_HOME" path="${android.sdk.home}"/>
+            <arg line="clean"/>
+        </exec>
+
+	<!-- compile the java code -->
+        <exec executable="./gradlew" dir="../android">
+            <env key="JAVA_HOME" path="${java.home}"/>
+            <env key="ANDROID_HOME" path="${android.sdk.home}"/>
+            <arg line=":app:assembleRelease"/>
+        </exec>
+
+	<!-- get the jar -->
+        <copy file="${build.release}/classes.jar" tofile="android/${name.jar}.jar"/>
+	<!-- <jar basedir="../temp-java" destfile="android/${name.jar}.jar"/> -->
     </target>
 
     <!-- Actionscript -->
