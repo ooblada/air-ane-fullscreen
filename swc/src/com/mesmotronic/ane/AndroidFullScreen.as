@@ -230,18 +230,13 @@ package com.mesmotronic.ane
 		 */
 		private static function _normalDisplayState():Boolean
 		{
-			if (stage.displayState != StageDisplayState.NORMAL)
+			if(stage)
 			{
-				if (stage) 
-				{
+				if (stage.displayState != StageDisplayState.NORMAL)
 					stage.displayState = StageDisplayState.NORMAL;
-					return true;
-				}
-				
-				return false;
+				return true;
 			}
-			
-			return true;
+			return false;
 		}
 		
 		/**
