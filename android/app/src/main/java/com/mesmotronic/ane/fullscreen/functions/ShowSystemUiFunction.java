@@ -43,34 +43,35 @@ public class ShowSystemUiFunction implements FREFunction
 	@Override
 	public FREObject call(FREContext context, FREObject[] args) 
 	{
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
 		{
 			try { return FREObject.newObject(false); }
 			catch (Exception e1) { return null; }
 		}
-		
-		try
-		{
-			final FullScreenContext fsc = (FullScreenContext) context;
-			
-			fsc.resetUi();
-			
-			fsc.getWindow().clearFlags
-			(
-				WindowManager.LayoutParams.FLAG_FULLSCREEN
-				| WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION 
-				| WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
-			);
+		else {
+			try
+			{
+				final FullScreenContext fsc = (FullScreenContext) context;
+
+				fsc.resetUi();
+
+				fsc.getWindow().clearFlags
+				(
+					WindowManager.LayoutParams.FLAG_FULLSCREEN
+					| WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
+					| WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+				);
+			}
+			catch (Exception e0)
+			{
+				try { return FREObject.newObject(false); }
+				catch (Exception e1) { return null; }
+			}
+
+			try { return FREObject.newObject(true); }
+			catch (Exception e2) {}
 		}
-		catch (Exception e0)
-		{
-			try { return FREObject.newObject(false); }
-			catch (Exception e1) { return null; }
-		}
-		
-		try { return FREObject.newObject(true); }
-		catch (Exception e2) {}
-		
+
 		return null;
 	}
 	

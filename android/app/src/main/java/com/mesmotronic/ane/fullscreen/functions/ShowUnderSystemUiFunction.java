@@ -50,35 +50,36 @@ public class ShowUnderSystemUiFunction implements FREFunction
 			try { return FREObject.newObject(false); }
 			catch (Exception e1) { return null; }
 		}
-		
-		try
-		{
-			final FullScreenContext fsc = (FullScreenContext) context; 
-			final Window window = fsc.getWindow();
-			
-			fsc.resetUi();
-			
-			// Extend view underneath translucent status and nav bars
-			
-			int uiOptions = 
-					View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-					| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-					| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-			
-			window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-			window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-			
-			fsc.setSystemUiVisibility(uiOptions);
+		else {
+			try
+			{
+				final FullScreenContext fsc = (FullScreenContext) context;
+				final Window window = fsc.getWindow();
+
+				fsc.resetUi();
+
+				// Extend view underneath translucent status and nav bars
+
+				int uiOptions =
+						View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+						| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+						| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+
+				window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+				window.setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+				fsc.setSystemUiVisibility(uiOptions);
+			}
+			catch (Exception e0)
+			{
+				try { return FREObject.newObject(false); }
+				catch (Exception e1) { return null; }
+			}
+
+			try { return FREObject.newObject(true); }
+			catch (Exception e2) {}
 		}
-		catch (Exception e0)
-		{
-			try { return FREObject.newObject(false); }
-			catch (Exception e1) { return null; }
-		}
-		
-		try { return FREObject.newObject(true); }
-		catch (Exception e2) {}
-		
+
 		return null;
 	}
 	
