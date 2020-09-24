@@ -53,227 +53,226 @@ public class ImmersiveModeFunction implements FREFunction
 	@Override
 	public FREObject call(final FREContext context, FREObject[] args) 
 	{
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
+		try
+		{
+			final FullScreenContext fsc = (FullScreenContext) context;
+
+			boolean isSticky = true;
+
+			try
+			{
+				isSticky = args[0].getAsBool();
+			}
+			catch (Exception ignored) {}
+
+			int immersive = isSticky
+				? View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+				: View.SYSTEM_UI_FLAG_IMMERSIVE;
+
+			final int uiOptions =
+				View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+				| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+				| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+				| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+				| View.SYSTEM_UI_FLAG_FULLSCREEN
+				| immersive;
+
+			fsc.resetUi();
+			fsc.setSystemUiVisibility(uiOptions);
+
+			if (isSticky)
+			{
+				// If it's sticky, we add listeners to ensure immersive mode is maintained
+
+				final View decorView = fsc.getDecorView();
+				final Window window = fsc.getWindow();
+				final Window.Callback windowCallback = fsc.getWindowCallback();
+
+				decorView.setOnFocusChangeListener(new View.OnFocusChangeListener()
+				{
+					@Override
+					public void onFocusChange(View v, boolean hasFocus)
+					{
+						if (hasFocus)
+						{
+							fsc.setSystemUiVisibility(uiOptions);
+						}
+
+						fsc.getOnFocusChangeListener().onFocusChange(v, hasFocus);
+					}
+				});
+
+				decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener()
+				{
+					@Override
+					public void onSystemUiVisibilityChange(int visibility)
+					{
+						fsc.setSystemUiVisibility(uiOptions);
+					}
+				});
+
+				window.setCallback(new Window.Callback()
+				{
+					@Override
+					public ActionMode onWindowStartingActionMode(Callback callback)
+					{
+						return windowCallback.onWindowStartingActionMode(callback);
+					}
+
+					@Override
+					public ActionMode onWindowStartingActionMode(Callback callback, int type)
+					{
+						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+							return windowCallback.onWindowStartingActionMode(callback, type);
+						}
+						return null;
+					}
+
+					@Override
+					public void onWindowFocusChanged(boolean hasFocus)
+					{
+						if (hasFocus)
+						{
+							fsc.setSystemUiVisibility(uiOptions);
+						}
+
+						windowCallback.onWindowFocusChanged(hasFocus);
+					}
+
+					@Override
+					public void onWindowAttributesChanged(LayoutParams attrs)
+					{
+						windowCallback.onWindowAttributesChanged(attrs);
+					}
+
+					@Override
+					public boolean onSearchRequested()
+					{
+						return windowCallback.onSearchRequested();
+					}
+
+					@Override
+					public boolean onSearchRequested(SearchEvent event)
+					{
+						if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+							return windowCallback.onSearchRequested(event);
+						}
+						return false;
+					}
+
+					@Override
+					public boolean onPreparePanel(int featureId, View view, Menu menu)
+					{
+						return windowCallback.onPreparePanel(featureId, view, menu);
+					}
+
+					@Override
+					public void onPanelClosed(int featureId, Menu menu)
+					{
+						windowCallback.onPanelClosed(featureId, menu);
+					}
+
+					@Override
+					public boolean onMenuOpened(int featureId, Menu menu)
+					{
+						return windowCallback.onMenuOpened(featureId, menu);
+					}
+
+					@Override
+					public boolean onMenuItemSelected(int featureId, MenuItem item)
+					{
+						return windowCallback.onMenuItemSelected(featureId, item);
+					}
+
+					@Override
+					public void onDetachedFromWindow()
+					{
+						windowCallback.onDetachedFromWindow();
+					}
+
+					@Override
+					public View onCreatePanelView(int featureId)
+					{
+						return windowCallback.onCreatePanelView(featureId);
+					}
+
+					@Override
+					public boolean onCreatePanelMenu(int featureId, Menu menu)
+					{
+						return windowCallback.onCreatePanelMenu(featureId, menu);
+					}
+
+					@Override
+					public void onContentChanged()
+					{
+						windowCallback.onContentChanged();
+					}
+
+					@Override
+					public void onAttachedToWindow()
+					{
+						windowCallback.onAttachedToWindow();
+					}
+
+					@Override
+					public void onActionModeStarted(ActionMode mode)
+					{
+						windowCallback.onActionModeStarted(mode);
+					}
+
+					@Override
+					public void onActionModeFinished(ActionMode mode)
+					{
+						windowCallback.onActionModeFinished(mode);
+					}
+
+					@Override
+					public boolean dispatchTrackballEvent(MotionEvent event)
+					{
+						return windowCallback.dispatchTrackballEvent(event);
+					}
+
+					@Override
+					public boolean dispatchTouchEvent(MotionEvent event)
+					{
+						return windowCallback.dispatchTouchEvent(event);
+					}
+
+					@Override
+					public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event)
+					{
+						return windowCallback.dispatchPopulateAccessibilityEvent(event);
+					}
+
+					@Override
+					public boolean dispatchKeyShortcutEvent(KeyEvent event)
+					{
+						return windowCallback.dispatchKeyShortcutEvent(event);
+					}
+
+					@Override
+					public boolean dispatchKeyEvent(KeyEvent event)
+					{
+						return windowCallback.dispatchKeyEvent(event);
+					}
+
+					@Override
+					public boolean dispatchGenericMotionEvent(MotionEvent event)
+					{
+						return windowCallback.dispatchGenericMotionEvent(event);
+					}
+				});
+
+			}
+		}
+		catch (Exception e0)
 		{
 			try { return FREObject.newObject(false); }
 			catch (Exception e1) { return null; }
 		}
-		else {
-			try
-			{
-				final FullScreenContext fsc = (FullScreenContext) context;
 
-				Boolean isSticky = true;
-
-				try
-				{
-					isSticky = args[0].getAsBool();
-				}
-				catch (Exception e3) {}
-
-				int immersive = isSticky
-					? View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-					: View.SYSTEM_UI_FLAG_IMMERSIVE;
-
-				final int uiOptions =
-					View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-					| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-					| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-					| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-					| View.SYSTEM_UI_FLAG_FULLSCREEN
-					| immersive;
-
-				fsc.resetUi();
-				fsc.setSystemUiVisibility(uiOptions);
-
-				if (isSticky)
-				{
-					// If it's sticky, we add listeners to ensure immersive mode is maintained
-
-					final View decorView = fsc.getDecorView();
-					final Window window = fsc.getWindow();
-					final Window.Callback windowCallback = fsc.getWindowCallback();
-
-					decorView.setOnFocusChangeListener(new View.OnFocusChangeListener()
-					{
-						@Override
-						public void onFocusChange(View v, boolean hasFocus)
-						{
-							if (hasFocus)
-							{
-								fsc.setSystemUiVisibility(uiOptions);
-							}
-
-							fsc.getOnFocusChangeListener().onFocusChange(v, hasFocus);
-						}
-					});
-
-					decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener()
-					{
-						@Override
-						public void onSystemUiVisibilityChange(int visibility)
-						{
-							fsc.setSystemUiVisibility(uiOptions);
-						}
-					});
-
-					window.setCallback(new Window.Callback()
-					{
-						@Override
-						public ActionMode onWindowStartingActionMode(Callback callback)
-						{
-							return windowCallback.onWindowStartingActionMode(callback);
-						}
-
-						@Override
-						public ActionMode onWindowStartingActionMode(Callback callback, int type)
-						{
-							return windowCallback.onWindowStartingActionMode(callback, type);
-						}
-
-						@Override
-						public void onWindowFocusChanged(boolean hasFocus)
-						{
-							if (hasFocus)
-							{
-								fsc.setSystemUiVisibility(uiOptions);
-							}
-
-							windowCallback.onWindowFocusChanged(hasFocus);
-						}
-
-						@Override
-						public void onWindowAttributesChanged(LayoutParams attrs)
-						{
-							windowCallback.onWindowAttributesChanged(attrs);
-						}
-
-						@Override
-						public boolean onSearchRequested()
-						{
-							return windowCallback.onSearchRequested();
-						}
-
-						@Override
-						public boolean onSearchRequested(SearchEvent event)
-						{
-							return windowCallback.onSearchRequested(event);
-						}
-
-						@Override
-						public boolean onPreparePanel(int featureId, View view, Menu menu)
-						{
-							return windowCallback.onPreparePanel(featureId, view, menu);
-						}
-
-						@Override
-						public void onPanelClosed(int featureId, Menu menu)
-						{
-							windowCallback.onPanelClosed(featureId, menu);
-						}
-
-						@Override
-						public boolean onMenuOpened(int featureId, Menu menu)
-						{
-							return windowCallback.onMenuOpened(featureId, menu);
-						}
-
-						@Override
-						public boolean onMenuItemSelected(int featureId, MenuItem item)
-						{
-							return windowCallback.onMenuItemSelected(featureId, item);
-						}
-
-						@Override
-						public void onDetachedFromWindow()
-						{
-							windowCallback.onDetachedFromWindow();
-						}
-
-						@Override
-						public View onCreatePanelView(int featureId)
-						{
-							return windowCallback.onCreatePanelView(featureId);
-						}
-
-						@Override
-						public boolean onCreatePanelMenu(int featureId, Menu menu)
-						{
-							return windowCallback.onCreatePanelMenu(featureId, menu);
-						}
-
-						@Override
-						public void onContentChanged()
-						{
-							windowCallback.onContentChanged();
-						}
-
-						@Override
-						public void onAttachedToWindow()
-						{
-							windowCallback.onAttachedToWindow();
-						}
-
-						@Override
-						public void onActionModeStarted(ActionMode mode)
-						{
-							windowCallback.onActionModeStarted(mode);
-						}
-
-						@Override
-						public void onActionModeFinished(ActionMode mode)
-						{
-							windowCallback.onActionModeFinished(mode);
-						}
-
-						@Override
-						public boolean dispatchTrackballEvent(MotionEvent event)
-						{
-							return windowCallback.dispatchTrackballEvent(event);
-						}
-
-						@Override
-						public boolean dispatchTouchEvent(MotionEvent event)
-						{
-							return windowCallback.dispatchTouchEvent(event);
-						}
-
-						@Override
-						public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event)
-						{
-							return windowCallback.dispatchPopulateAccessibilityEvent(event);
-						}
-
-						@Override
-						public boolean dispatchKeyShortcutEvent(KeyEvent event)
-						{
-							return windowCallback.dispatchKeyShortcutEvent(event);
-						}
-
-						@Override
-						public boolean dispatchKeyEvent(KeyEvent event)
-						{
-							return windowCallback.dispatchKeyEvent(event);
-						}
-
-						@Override
-						public boolean dispatchGenericMotionEvent(MotionEvent event)
-						{
-							return windowCallback.dispatchGenericMotionEvent(event);
-						}
-					});
-
-				}
-			}
-			catch (Exception e0)
-			{
-				try { return FREObject.newObject(false); }
-				catch (Exception e1) { return null; }
-			}
-
-			try { return FREObject.newObject(true); }
-			catch (Exception e2) {}
-		}
+		try { return FREObject.newObject(true); }
+		catch (Exception ignored) {}
 
 		return null;
 	}

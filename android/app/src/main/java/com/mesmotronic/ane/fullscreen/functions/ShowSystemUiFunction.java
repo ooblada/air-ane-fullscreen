@@ -30,7 +30,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.mesmotronic.ane.fullscreen.functions;
 
-import android.os.Build;
 import android.view.WindowManager;
 
 import com.adobe.fre.FREContext;
@@ -43,34 +42,27 @@ public class ShowSystemUiFunction implements FREFunction
 	@Override
 	public FREObject call(FREContext context, FREObject[] args) 
 	{
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
+		try
+		{
+			final FullScreenContext fsc = (FullScreenContext) context;
+
+			fsc.resetUi();
+
+			fsc.getWindow().clearFlags
+			(
+				WindowManager.LayoutParams.FLAG_FULLSCREEN
+				| WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
+				| WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+			);
+		}
+		catch (Exception e0)
 		{
 			try { return FREObject.newObject(false); }
 			catch (Exception e1) { return null; }
 		}
-		else {
-			try
-			{
-				final FullScreenContext fsc = (FullScreenContext) context;
 
-				fsc.resetUi();
-
-				fsc.getWindow().clearFlags
-				(
-					WindowManager.LayoutParams.FLAG_FULLSCREEN
-					| WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION
-					| WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
-				);
-			}
-			catch (Exception e0)
-			{
-				try { return FREObject.newObject(false); }
-				catch (Exception e1) { return null; }
-			}
-
-			try { return FREObject.newObject(true); }
-			catch (Exception e2) {}
-		}
+		try { return FREObject.newObject(true); }
+		catch (Exception ignored) {}
 
 		return null;
 	}

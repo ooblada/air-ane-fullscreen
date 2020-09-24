@@ -33,6 +33,7 @@ package com.mesmotronic.ane.fullscreen;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.os.Build;
 import android.view.ActionMode;
 import android.view.ActionMode.Callback;
 import android.view.KeyEvent;
@@ -118,7 +119,10 @@ public class FullScreenContext extends FREContext
 				@Override
 				public ActionMode onWindowStartingActionMode(Callback callback, int type) 
 				{
-					return windowCallback.onWindowStartingActionMode(callback, type);
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+						return windowCallback.onWindowStartingActionMode(callback, type);
+					}
+					return null;
 				}
 				
 				@Override
@@ -156,11 +160,14 @@ public class FullScreenContext extends FREContext
 				@Override
 				public boolean onSearchRequested(SearchEvent event) 
 				{
-					return windowCallback.onSearchRequested(event);
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+						return windowCallback.onSearchRequested(event);
+					}
+					return false;
 				}
 				
 				@Override
-				public boolean onPreparePanel(int featureId, View view, Menu menu) 
+				public boolean onPreparePanel(int featureId, View view, Menu menu)
 				{
 					return windowCallback.onPreparePanel(featureId, view, menu);
 				}

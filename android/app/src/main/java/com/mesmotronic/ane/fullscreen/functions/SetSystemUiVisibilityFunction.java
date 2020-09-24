@@ -56,7 +56,7 @@ public class SetSystemUiVisibilityFunction implements FREFunction
 		}
 		
 		try { return FREObject.newObject(true); }
-		catch (Exception e2) {}
+		catch (Exception ignored) {}
 		
 		return null;
 	}

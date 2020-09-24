@@ -30,7 +30,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package com.mesmotronic.ane.fullscreen.functions;
 
-import android.os.Build;
 import android.view.View;
 
 import com.adobe.fre.FREContext;
@@ -61,7 +60,7 @@ public class LeanModeFunction implements FREFunction
 		}
 		
 		try { return FREObject.newObject(true); }
-		catch (Exception e2) {}
+		catch (Exception ignored) {}
 		
 		return null;
 	}

@@ -31,7 +31,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package com.mesmotronic.ane.fullscreen.functions;
 
 import android.graphics.Point;
-import android.os.Build;
 import android.view.View;
 
 import com.adobe.fre.FREContext;
@@ -43,20 +42,17 @@ public class ImmersiveWidthFunction implements FREFunction
 	@Override
 	public FREObject call(FREContext context, FREObject[] args) 
 	{
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+		try
 		{
-			try
-			{
-				View decorView = context.getActivity().getWindow().getDecorView();
-				Point outSize = new Point();
-				
-				decorView.getDisplay().getRealSize(outSize);
-				
-				return FREObject.newObject(outSize.x);
-			}
-			catch (Exception e0) {} 
+			View decorView = context.getActivity().getWindow().getDecorView();
+			Point outSize = new Point();
+
+			decorView.getDisplay().getRealSize(outSize);
+
+			return FREObject.newObject(outSize.x);
 		}
-		
+		catch (Exception ignored) {}
+
 		try { return FREObject.newObject(0); }
 		catch (Exception e1) { return null; }
 	}
