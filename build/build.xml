@@ -18,8 +18,8 @@
     <target name="android" description="Build Android Library">
 	
         <!-- paths -->
-        <property name="build.intermediates" value="../android/app/build/intermediates"/>
-        <property name="build.release" value="${build.intermediates}/packaged-classes/release"/>
+        <property name="build.intermediates" value="../android/lib/build/intermediates"/>
+        <property name="build.release" value="${build.intermediates}/aar_main_jar/release"/>
 
 	<!-- clean up destination dir -->
 	<delete dir="android"/>
@@ -42,7 +42,7 @@
         <exec executable="./gradlew" dir="../android">
             <env key="JAVA_HOME" path="${java.home}"/>
             <env key="ANDROID_HOME" path="${android.sdk.home}"/>
-            <arg line=":app:assembleRelease"/>
+            <arg line=":lib:assembleRelease"/>
         </exec>
 
 	<!-- get the jar -->
